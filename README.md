@@ -19,7 +19,7 @@ The goal is not to fully repair every PDF/UA issue yet. The goal is to show how 
 |---|---|
 | `make_broken_pdf.py` | Builds an intentionally broken PDF (You can use this as a part of your synthetic dataset generation to test your system)|
 | `broken.pdf` | Example input PDF |
-| `accessibility_fix_demo.py` | Runs veraPDF, resolves failed checks, applies simple fixes |
+| `accessibility_fix_demo.py` | Runs veraPDF, resolves failed checks, applies simple corrections |
 | `output-fixed.pdf` | Example patched output |
 | `requirements.txt` | Python dependency list |
 

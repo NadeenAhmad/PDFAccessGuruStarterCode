@@ -44,13 +44,13 @@ verapdf --version
 
 ## Run the demo
 
-Generate the broken PDF/ or use the sample broken.pdf in the repo:
+Generate the broken PDF or use the sample broken.pdf in the repo:
 
 ```bash
 python make_broken_pdf.py broken.pdf
 ```
 
-Run the fixer:
+Run the correction:
 
 ```bash
 python accessibility_fix_demo.py
@@ -178,14 +178,3 @@ form
 VeraPDF rule IDs can vary between validation-profile versions. (For now, you said that you will use UA1)
 
 The rule message and context path are often more stable than the exact test number. If a fixer stops firing after a veraPDF upgrade, check the new XML report and update the `@fixer("...")` rule ID.
-
-## Suggested script improvement
-
-The current demo script uses hardcoded paths. To make this README command-line friendly, replace the hardcoded configuration with `argparse`:
-
-
-You can test this code by running:
-
-```bash
-python accessibility_fix_demo.py broken.pdf -o output-fixed.pdf
-```

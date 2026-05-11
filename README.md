@@ -68,21 +68,23 @@ The script will:
 Example output shape:
 
 ```text
-Running veraPDF on broken.pdf ...
-
-Rule    : 7.2-1
-Message : Natural language is not defined
-Context : root/document[0]/catalog[0]
-
-    Element : Pdf (1 pages)
+Rule    : 7.2-34
+Message : Natural language for text in page content cannot be determined
+Context : root/document[0]/pages[0](6 0 obj PDPage)/contentStream[0](10 0 obj PDSemanticContentStream)/content[1]{mcid:0}/contentItem[0]{mcid:0}
+    Element : /Page keys=['/Contents', '/Type', '/Resources', '/Parent', '/StructParents', '/Annots']
     Fix : set catalog /Lang = 'en' (placeholder)
 
-Rule    : 7.18.1-2
-Message : Annotation does not have Contents
-Context : root/document[0]/pages[0]/annots[0]
+Rule    : 7.2-34
+Message : Natural language for text in page content cannot be determined
+Context : root/document[0]/pages[0](6 0 obj PDPage)/contentStream[0](10 0 obj PDSemanticContentStream)/content[2]{mcid:1}/contentItem[0]{mcid:1}
+    Element : /Page keys=['/Contents', '/Type', '/Resources', '/Parent', '/StructParents', '/Annots']
+    Fix : catalog /Lang already set, nothing to do
 
-    Element : /Annot keys=['/Type', '/Subtype', '/Rect', ...]
-    Fix : added placeholder /Contents on annotation
+Rule    : 7.2-34
+Message : Natural language for text in page content cannot be determined
+Context : root/document[0]/pages[0](6 0 obj PDPage)/contentStream[0](10 0 obj PDSemanticContentStream)/content[3]{mcid:2}/contentItem[1]{mcid:2}
+    Element : /Page keys=['/Contents', '/Type', '/Resources', '/Parent', '/StructParents', '/Annots']
+    Fix : catalog /Lang already set, nothing to do
 
 Patched copy written to output-fixed.pdf
 ```

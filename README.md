@@ -1,10 +1,10 @@
-# PDF accessibility fixer demo
+# PDF accessibility started code
 
 This starter shows one small loop:
 
 **veraPDF finds PDF/UA violations → Python resolves the failing object → pikepdf patches the PDF.**
 
-The demo PDF is intentionally broken. It contains accessibility issues such as:
+The demo PDF is intentionally broken (broken.pdf). It contains accessibility violations such as:
 
 - missing document language
 - missing document title metadata
@@ -17,7 +17,7 @@ The goal is not to fully repair every PDF/UA issue yet. The goal is to show how 
 
 | File | Purpose |
 |---|---|
-| `make_broken_pdf.py` | Builds a tiny intentionally broken PDF |
+| `make_broken_pdf.py` | Builds an intentionally broken PDF (You can use this as a part of your synthetic dataset generation to test your system)|
 | `broken.pdf` | Example input PDF |
 | `accessibility_fix_demo.py` | Runs veraPDF, resolves failed checks, applies simple fixes |
 | `output-fixed.pdf` | Example patched output |
@@ -44,7 +44,7 @@ verapdf --version
 
 ## Run the demo
 
-Generate the broken PDF:
+Generate the broken PDF/ or use the sample broken.pdf in the repo:
 
 ```bash
 python make_broken_pdf.py broken.pdf
@@ -87,9 +87,9 @@ Context : root/document[0]/pages[0]/annots[0]
 Patched copy written to output-fixed.pdf
 ```
 
-## What changed?
 
-The fixer adds placeholder values such as:
+
+The correction module implemented here adds placeholder values such as:
 
 ```python
 pdf.Root["/Lang"] = "en"
@@ -99,7 +99,7 @@ element["/Contents"] = "TODO: describe this annotation"
 element["/Alt"] = "TODO: describe this figure"
 ```
 
-These are not final accessibility repairs. They are placeholders showing where a real tool would insert human-authored or LLM-assisted text.
+These are not final accessibility corrections. They are placeholders showing where a real tool would insert human-authored or LLM-assisted text.
 
 ## The key idea
 
@@ -110,7 +110,7 @@ root/document[0]/pages[0]/annots[0](9 0 obj PDLinkAnnot)
 root/document[0]/StructTreeRoot[0]/K[0](7 0 obj SEDocument)/K[2](14 0 obj SEFigure)
 ```
 
-pikepdf does not understand these paths automatically.
+pikepdf does not automatically recognize these paths.
 
 So the demo has a small resolver:
 
@@ -118,7 +118,7 @@ So the demo has a small resolver:
 element = resolve_context(v.context, pdf)
 ```
 
-The resolver walks the veraPDF path one segment at a time. The translation logic lives in `step()`.
+The resolver walks the veraPDF path segment by segment. The translation logic lives in `step()`.
 
 When veraPDF says:
 
@@ -126,17 +126,17 @@ When veraPDF says:
 pages[0]/annots[0]
 ```
 
-the resolver returns the actual annotation dictionary in pikepdf.
+The resolver returns the actual annotation dictionary in pikepdf.
 
-Then the fixer can mutate it:
+Then the correction module can mutate it:
 
 ```python
 element["/Contents"] = "TODO: describe this annotation"
 ```
 
-## Add your own fixer
+## Add your own correction module
 
-A fixer is just a function registered by rule id:
+The correction module is just a function registered by rule id:
 
 ```python
 @fixer("7.18.1-2")
@@ -148,10 +148,10 @@ def fix_annotation_contents(element, pdf):
 To support a new rule:
 
 1. run veraPDF
-2. copy the failed rule id and context path
+2. Copy the failed rule id and context path
 3. make sure `resolve_context()` reaches the object
 4. add a new `@fixer(...)`
-5. save and re-run veraPDF
+5. Save and re-run veraPDF
 
 ## When resolution fails
 
@@ -161,7 +161,7 @@ You may see:
 Element : <unresolved - extend `step` for this path>
 ```
 
-That means veraPDF used a path segment that this starter does not know how to translate yet.
+That means veraPDF used a path segment that this starter does not yet know how to translate.
 
 Add a case to `step()`.
 
@@ -175,27 +175,16 @@ form
 
 ## Important note on rule IDs
 
-veraPDF rule ids can vary between validation-profile versions.
+VeraPDF rule IDs can vary between validation-profile versions. (For now, you said that you will use UA1)
 
-The rule message and context path are often more stable than the exact test number. If a fixer stops firing after a veraPDF upgrade, check the new XML report and update the `@fixer("...")` rule id.
+The rule message and context path are often more stable than the exact test number. If a fixer stops firing after a veraPDF upgrade, check the new XML report and update the `@fixer("...")` rule ID.
 
 ## Suggested script improvement
 
 The current demo script uses hardcoded paths. To make this README command-line friendly, replace the hardcoded configuration with `argparse`:
 
-```python
-parser = argparse.ArgumentParser()
-parser.add_argument("pdf_path", nargs="?", default="broken.pdf")
-parser.add_argument("-o", "--output", default="output-fixed.pdf")
-parser.add_argument("--flavour", default="ua1")
-args = parser.parse_args()
 
-PDF_PATH = args.pdf_path
-OUTPUT_PATH = args.output
-FLAVOUR = args.flavour
-```
-
-Then students can run:
+You can test this code by running:
 
 ```bash
 python accessibility_fix_demo.py broken.pdf -o output-fixed.pdf
